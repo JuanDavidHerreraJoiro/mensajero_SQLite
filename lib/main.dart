@@ -97,12 +97,13 @@ class Vistamensajeros extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: posts == null ? 0 : posts.length,
-        itemBuilder: (context, posicion) {
-          consulta(posts[posicion].id, posts[posicion]);
-          return FutureBuilder(
-            future: Consultar_Post_Total(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
+      itemCount: posts == null ? 0 : posts.length,
+      itemBuilder: (context, posicion) {
+        consulta(posts[posicion].id, posts[posicion]);
+        return FutureBuilder(
+          future: Consultar_Post_Total(),
+          builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+            if (snapshot.hasData) {
               return ListTile(
                 onTap: () {
                   Navigator.push(
@@ -128,28 +129,22 @@ class Vistamensajeros extends StatelessWidget {
                   child: Text(snapshot.data[posicion].placa),
                 ),
               );
-            },
-          );
-        });
+            }
+            return CircularProgressIndicator();
+          },
+        );
+      },
+    );
   }
 }
 
+List<Post> listPost = new List<Post>();
+
 consulta(String id, Post post) async {
-  List<Post> listPost = new List<Post>();
-  List<Post> listPost2 = new List<Post>();
   listPost.clear();
   listPost = await Consultar_Post(id);
 
   if (listPost == null) {
     Guardar_Post(post);
-  } else {
-    
-    print("[Si Esta]" +
-        "[" +
-        listPost2.indexOf(listPost.first).toString() +
-        "]" +
-        listPost2.length.toString());
-        listPost2.add(listPost.first);
   }
-  return listPost2;
 }
