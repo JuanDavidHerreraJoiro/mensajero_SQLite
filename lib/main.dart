@@ -89,21 +89,26 @@ Widget getInfo(BuildContext context) {
   );
 }
 
-class Vistamensajeros extends StatelessWidget {
+class Vistamensajeros extends StatefulWidget {
   final List<Post> posts;
 
   const Vistamensajeros({Key key, this.posts}) : super(key: key);
 
   @override
+  _VistamensajerosState createState() => _VistamensajerosState();
+}
+
+class _VistamensajerosState extends State<Vistamensajeros> {
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: posts == null ? 0 : posts.length,
+      itemCount: widget.posts == null ? 0 : widget.posts.length,
       itemBuilder: (context, posicion) {
-        consulta(posts[posicion].id, posts[posicion]);
+        consulta(widget.posts[posicion].id, widget.posts[posicion]);
         return FutureBuilder(
           future: Consultar_Post_Total(),
           builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.hasData != null) {
               return ListTile(
                 onTap: () {
                   Navigator.push(
@@ -129,10 +134,15 @@ class Vistamensajeros extends StatelessWidget {
                   child: Text(snapshot.data[posicion].placa),
                 ),
               );
+              
+            }if (snapshot.hasError) {
+              return CircularProgressIndicator();
+            } else {
+              return CircularProgressIndicator();
             }
-            return CircularProgressIndicator();
           },
         );
+        return CircularProgressIndicator();
       },
     );
   }
